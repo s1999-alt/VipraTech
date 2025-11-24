@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  body {
+    background-color: #f4f7fb;
+  }
+
+  h2, h3 {
+    color: #0a0f24;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .card {
+    border: none;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    background: linear-gradient(145deg, #ffffff, #f1f1f1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    color: #0d6efd;
+    font-weight: 600;
+  }
+
+  .card-text {
+    color: #444;
+    font-size: 1rem;
+  }
+
+  input[type="number"] {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="number"]:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 4px rgba(13, 110, 253, 0.4);
+    outline: none;
+  }
+
+  .btn-success {
+    background: linear-gradient(45deg, #198754, #20c997);
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-success:hover {
+    background: linear-gradient(45deg, #157347, #0dcaf0);
+    transform: scale(1.03);
+  }
+
+  .list-group-item {
+    border: none;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+  }
+
+  .list-group-item strong {
+    color: #0d6efd;
+  }
+
+  hr.my-4 {
+    border-top: 2px solid #dee2e6;
+  }
+</style>
+
+<h2 class="mb-4 text-center">🛍️ Products</h2>
+
+<div class="row">
+  {% for product in products %}
+    <div class="col-md-4">
+      <div class="card p-4 mb-4 shadow-sm">
+          {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top mb-3" style="height: 200px; object-fit: cover; border-radius: 10px;">
+  {% else %}
+    <img src="https://via.placeholder.com/200x200?text=No+Image" alt="No Image" class="card-img-top mb-3" style="height: 200px; object-fit: cover; border-radius: 10px;">
+  {% endif %}
+        <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text">Price: ₹{{ product.price }}</p>
+
+
+          <form method="post" action="{% url 'create_checkout_session' %}">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <input 
+              type="number" 
+              name="quantity" 
+              min="1" 
+              value="1" 
+              class="form-control mb-3" 
+              required
+            >
+            <button type="submit" class="btn btn-success w-100">Buy Now</button>
+          </form>
+        {% comment %} {% else %}
+          <p class="text-muted mt-2">
+            Please <a href="{% url 'login' %}">login</a> to purchase.
+          </p> {% endcomment %}
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted text-center">No products available.</p>
+  {% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+  <hr class="my-4">
+  <h3 class="mb-3">My Orders</h3>
+  <ul class="list-group">
+    {% for order in orders %}
+      <li class="list-group-item">
+        {{ order.product.name }} — {{ order.quantity }} × ₹{{ order.product.price }}
+        = <strong>₹{{ order.total_amount }}</strong>
+      </li>
+    {% empty %}
+      <p class="text-muted">No orders yet.</p>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+
+{% endblock content %}
