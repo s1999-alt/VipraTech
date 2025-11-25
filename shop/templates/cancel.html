@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mt-5">
+  <h2 class="text-danger mb-3">Payment Canceled ❌</h2>
+  <p>{{ message }}</p>
+  <p class="text-muted">
+    If you faced a problem while processing the payment, please try again.
+  </p>
+
+  <a href="{% url 'index' %}" class="btn btn-primary mt-3">
+    Go Back to Home
+  </a>
+</div>
+{% endblock %}

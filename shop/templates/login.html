@@ -4,6 +4,12 @@
 
 <link rel="stylesheet" href="{% static 'shop/login.css' %}">
 
+{% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-warning">{{ msg }}</div>
+  {% endfor %}
+{% endif %}
+
 <div class="login-container">
   <div class="login-card">
     <h2>Login</h2>
